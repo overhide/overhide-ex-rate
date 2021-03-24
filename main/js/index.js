@@ -26,6 +26,7 @@ const POSTGRES_USER = process.env.POSTGRES_USER || process.env.npm_config_POSTGR
 const POSTGRES_PASSWORD = process.env.POSTGRES_PASSWORD || process.env.npm_config_POSTGRES_PASSWORD || process.env.npm_package_config_POSTGRES_PASSWORD;
 const POSTGRES_SSL = process.env.POSTGRES_SSL || process.env.npm_config_POSTGRES_SSL || process.env.npm_package_config_POSTGRES_SSL;
 const SALT = process.env.SALT || process.env.npm_config_SALT || process.env.npm_package_config_SALT;
+const ISPROD = process.env.ISPROD || process.env.npm_config_ISPROD || process.env.npm_package_config_ISPROD || false;
 const TOKEN_URL = process.env.TOKEN_URL || process.env.npm_config_TOKEN_URL || process.env.npm_package_config_TOKEN_URL;
 const URI = `${PROTOCOL}://${BASE_URL}`;
 const DOMAIN = BASE_URL.split(':')[0];
@@ -49,6 +50,7 @@ const ctx_config = {
   pgpassword: POSTGRES_PASSWORD,
   pgssl: !!POSTGRES_SSL,
   salt: SALT,
+  isTest: !ISPROD,
   tokenUrl: TOKEN_URL,
 };
 const log = require('./lib/log.js').init(ctx_config).fn("app");
@@ -132,6 +134,10 @@ app.get('/swagger.json', throttle, (req, res) => {
  *           JSON list of objects `[{timestamp: <ISO8601 timestamp>, minrate: <float>, maxrate: <float>},..]` whereby `minrate` indicates
  *           the lowest conversion rate between *currency* and USD seen within a time window (configurable by service) until the `timestamp`
  *           and `maxrate` indicates the highest conversion rate within same.
+ *       401:
+ *         description: |
+ *            These APIs require bearer tokens to be furnished in an 'Authorization' header as 'Bearer ..' values.  The tokens are to be retrieved from
+ *            [https://token.overhide.io](https://token.overhide.io).
  */
 app.get('/rates/:currency/:timestamps', throttle, token, async (req, res, next) => {
   if (await service.get(req, res)) {

@@ -37,10 +37,8 @@ class Token {
   // @param {} next -- next middleware call trigger
   [failToken](reason, res, next) {   
     debug(`token invalid: %s`, reason);
-    // deprecation: noop for now, as the API used to not require tokens, but soon this will be a 401.  Uncomment below when ready.
-    // res.status(401).send("unauthorized token");
-    // return;
-    next(); // don't enforce yet
+    res.status(401).send("unauthorized token");
+    return;
   }
 
   /**

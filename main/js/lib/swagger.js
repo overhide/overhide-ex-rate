@@ -74,6 +74,8 @@ class Swagger {
           description: |          
             API to retrieve exchange rates between specified currencies and US dollars.
 
+            This API is written in support of other APIs and widgets for [https://overhide.io](https://overhide.io) and the [ledgers.js](https://www.npmjs.com/package/ledgers.js) library.
+
             US dollars are the normalizing currency in *overhide*.
 
             These APIs require bearer tokens to be furnished in an 'Authorization' header as 'Bearer ..' values.  The tokens are to be retrieved from
@@ -91,7 +93,9 @@ class Swagger {
             description: |
               A bad request from the client.
           401:
-            description: Authentication information is missing or invalid
+            description: |
+                These APIs require bearer tokens to be furnished in an 'Authorization' header as 'Bearer ..' values.  The tokens are to be retrieved from
+                [https://token.overhide.io](https://token.overhide.io).
             headers:
               WWW_Authenticate:
                 type: string
