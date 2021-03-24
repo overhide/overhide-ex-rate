@@ -9,7 +9,25 @@ jobs:
       - run:
           shell: /bin/sh
           command: |
-            printf "DEBUG=overhide-ex-rate*" > .npmrc.dev
+            printf "DEBUG=overhide-ex-rate*" > .npmrc.dev;
+            printf "POSTGRES_HOST=postgres" >> .npmrc.dev;
+            printf "POSTGRES_PORT=5432" >> .npmrc.dev;
+            printf "POSTGRES_DB=oh-ex-rate" >> .npmrc.dev;
+            printf "POSTGRES_USER=adam" >> .npmrc.dev;
+            printf "POSTGRES_PASSWORD=c0c0nut" >> .npmrc.dev;
+            cat .npmrc.dev   
+      - run:
+          shell: /bin/sh
+          command: docker-compose -f main/docker/docker-compose.yml -f main/docker/docker-compose.dev.yml --project-directory . --project-name oh up -d 
+      - run:
+          shell: /bin/sh
+          command: docker exec `docker ps -q --filter name="oh-ex-rate"` npm run db-evolve
+      - run:
+          shell: /bin/sh
+          command: docker-compose -f main/docker/docker-compose.yml -f main/docker/docker-compose.dev.yml --project-directory . --project-name oh kill oh-ex-rate
+      - run:
+          shell: /bin/sh
+          command: docker system prune -f
       - run:
           shell: /bin/sh
           command: docker-compose -f main/docker/docker-compose.yml -f main/docker/docker-compose.dev.yml --project-directory . --project-name oh run -v ~/overhide-ex-rate/test-report:/home/node/app/test-report -d oh-ex-rate

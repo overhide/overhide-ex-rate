@@ -55,6 +55,7 @@
     "chai-http": "4.2.0",
     "copyfiles": "2.1.0",
     "mocha": "5.2.0",
+    "mocha-junit-reporter": "1.22.0",
     "mock-require": "3.0.3",
     "nodemon": "1.18.10",
     "puppeteer": "^1.15.0"
@@ -68,7 +69,7 @@
     "dev": "nodemon --inspect main/js/index.js",
     "build": "docker build -t oh-ex-rate -f main/docker/Dockerfile .",
     "compose-dev": "docker-compose -f main/docker/docker-compose.yml -f main/docker/docker-compose.dev.yml --project-directory . --project-name oh up -d",
-    "psql-dev": "docker run -it --rm --link postgres:postgres --network oh_default postgres psql -h postgres -U adam -d postgres",
+    "psql-dev": "docker run -it --rm --link postgres:postgres -e PGPASSWORD=c0c0nut --network oh_default postgres psql -h postgres -U adam -d postgres",
     "db-evolve": "node tools/db-evolve/db-evolve.js"
   }
 }
