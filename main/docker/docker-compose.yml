@@ -1,6 +1,6 @@
 version: '3.2'
 services:
-  oh-ledger:
+  oh-ex-rate:
     build: 
       context: .
       dockerfile: ./main/docker/Dockerfile
