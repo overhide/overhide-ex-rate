@@ -9,12 +9,12 @@ jobs:
       - run:
           shell: /bin/sh
           command: |
-            printf "DEBUG=overhide-ex-rate*" > .npmrc.dev;
-            printf "POSTGRES_HOST=postgres" >> .npmrc.dev;
-            printf "POSTGRES_PORT=5432" >> .npmrc.dev;
-            printf "POSTGRES_DB=oh-ex-rate" >> .npmrc.dev;
-            printf "POSTGRES_USER=adam" >> .npmrc.dev;
-            printf "POSTGRES_PASSWORD=c0c0nut" >> .npmrc.dev;
+            printf "DEBUG=overhide-ex-rate*\n" > .npmrc.dev;
+            printf "POSTGRES_HOST=postgres\n" >> .npmrc.dev;
+            printf "POSTGRES_PORT=5432\n" >> .npmrc.dev;
+            printf "POSTGRES_DB=oh-ex-rate\n" >> .npmrc.dev;
+            printf "POSTGRES_USER=adam\n" >> .npmrc.dev;
+            printf "POSTGRES_PASSWORD=c0c0nut\n" >> .npmrc.dev;
             cat .npmrc.dev   
       - run:
           shell: /bin/sh
