@@ -12,7 +12,7 @@ jobs:
             printf "DEBUG=overhide-ex-rate*" > .npmrc.dev
       - run:
           shell: /bin/sh
-          command: docker-compose -f main/docker/docker-compose.yml -f main/docker/docker-compose.dev.yml --project-directory . --project-name oh run -v ~/overhide-ex-rate/test-report:/home/node/app/test-report -d oh-eth
+          command: docker-compose -f main/docker/docker-compose.yml -f main/docker/docker-compose.dev.yml --project-directory . --project-name oh run -v ~/overhide-ex-rate/test-report:/home/node/app/test-report -d oh-ex-rate
       - run:
           shell: /bin/sh
           command: sleep 10

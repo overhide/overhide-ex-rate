@@ -2,6 +2,8 @@
 
 # overhide-ex-rate
 
+[![CircleCI](https://circleci.com/gh/overhide/overhide-ex-rate.svg?style=svg)](https://circleci.com/gh/overhide/overhide-ex-rate)
+
 Exchange rate provider between *overhide* supported currencies and US dollars.
 
 Supported *overhide* currencies:
