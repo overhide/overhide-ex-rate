@@ -18,6 +18,12 @@ jobs:
           command: sleep 10
       - run:
           shell: /bin/sh
+          command: docker ps -q --filter name="oh-ex-rate"
+      - run:
+          shell: /bin/sh
+          command: docker ps -q
+      - run:
+          shell: /bin/sh
           command: docker exec `docker ps -q --filter name="oh-ex-rate"` npm run test-report
       - store_test_results:
           path: ./test-report
