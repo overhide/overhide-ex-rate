@@ -3,7 +3,7 @@ const chai = require('chai');
 const assert = chai.assert;
 const mock = require('mock-require');
 
-const POSTGRES_HOST = process.env.POSTGRES_HOST || process.env.npm_config_POSTGRES_HOST || process.env.npm_package_config_POSTGRES_HOST || 'postgres';
+const POSTGRES_HOST = process.env.POSTGRES_HOST || process.env.npm_config_POSTGRES_HOST || process.env.npm_package_config_POSTGRES_HOST || 'localhost';
 const POSTGRES_PORT = process.env.POSTGRES_PORT || process.env.npm_config_POSTGRES_PORT || process.env.npm_package_config_POSTGRES_PORT || 5432;
 const POSTGRES_DB = process.env.POSTGRES_DB || process.env.npm_config_POSTGRES_DB || process.env.npm_package_config_POSTGRES_DB || 'oh-ex-rate'; 
 const POSTGRES_USER = process.env.POSTGRES_USER || process.env.npm_config_POSTGRES_USER || process.env.npm_package_config_POSTGRES_USER || 'adam';
@@ -59,7 +59,7 @@ const timestamp = require('../../main/js/lib/timestamp.js').init();
 const rates = require('../../main/js/lib/rates.js').init();
 const service = require('../../main/js/lib/service.js').init();
 
-describe('service tests', () => {
+xdescribe('service tests', () => {
 
   /**************/
   /* The tests. */
