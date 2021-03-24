@@ -8,3 +8,5 @@ services:
     container_name: oh-ex-rate
     ports:
     - "8110:8110"
+    command: > 
+      sh -c "npm run start"
