@@ -1,0 +1,74 @@
+{
+  "name": "overhide-ex-rate",
+  "version": "1.0.0",
+  "description": "Exchange rate provider between overhide imparters (supported currencies) and US dollars.",
+  "main": "main/js/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JakubNer/overhide-ex-rate.git"
+  },
+  "keywords": [
+    "overhide",
+    "authorization",
+    "exchange",
+    "dollars",
+    "usd",
+    "ethers"
+  ],
+  "author": "Jakub Ner",
+  "license": "MIT",
+  "homepage": "https://github.com/JakubNer/overhide-ex-rate.git",
+  "dependencies": {
+    "@godaddy/terminus": "4.1.0",
+    "coingecko-api": "1.0.10",
+    "cors": "2.8.5",
+    "debug": "4.1.0",
+    "ejs": "2.6.1",
+    "express": "4.16.4",
+    "express-rate-limit": "3.3.2",
+    "js-yaml": "3.13.1",
+    "license-compatibility-checker": "0.3.3",
+    "node-fetch": "2.3.0",
+    "pg": "7.7.1",
+    "qs": "6.6.0",
+    "swagger-jsdoc": "^3.2.9",
+    "uuid": "3.3.2"
+  },
+  "config": {
+    "PROTOCOL": "http",
+    "BASE_URL": "localhost:8110",
+    "PORT": 8110,
+    "DEBUG": "",
+    "RATE_LIMIT_WINDOW_MS": 1000,
+    "RATE_LIMIT_MAX_REQUESTS_PER_WINDOW": 100,
+    "POSTGRES_HOST": "localhost",
+    "POSTGRES_PORT": 5432,
+    "POSTGRES_DATABASE": "",
+    "POSTGRES_USER": "",
+    "POSTGRES_PASSWORD": "",
+    "POSTGRES_SSL": "",
+    "SALT": "",
+    "TOKEN_URL": "https://token.overhide.io/validate"
+  },
+  "devDependencies": {
+    "chai": "4.2.0",
+    "chai-http": "4.2.0",
+    "copyfiles": "2.1.0",
+    "mocha": "5.2.0",
+    "mock-require": "3.0.3",
+    "nodemon": "1.18.10",
+    "puppeteer": "^1.15.0"
+  },
+  "scripts": {
+    "lic-check": "license-compatibility-checker",
+    "start": "node main/js/index.js",
+    "test": "mocha --exit --timeout 5000 test/js",
+    "test-report": "mocha --exit --timeout 5000 test/js --reporter mocha-junit-reporter --reporter-options toConsole=true,mochaFile=test-report/test-report.xml",
+    "load": "node test/load/load.js",
+    "dev": "nodemon --inspect main/js/index.js",
+    "build": "docker build -t oh-ex-rate -f main/docker/Dockerfile .",
+    "compose-dev": "docker-compose -f main/docker/docker-compose.yml -f main/docker/docker-compose.dev.yml --project-directory . --project-name oh up -d",
+    "psql-dev": "docker run -it --rm --link postgres:postgres --network oh_default postgres psql -h postgres -U adam -d postgres",
+    "db-evolve": "node tools/db-evolve/db-evolve.js"
+  }
+}

@@ -1,0 +1,25 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/overhide-ex-rate
+    machine:
+      image: ubuntu-2004:202010-01
+    steps:
+      - checkout
+      - run:
+          shell: /bin/sh
+          command: |
+            printf "DEBUG=overhide-ex-rate*" > .npmrc.dev
+      - run:
+          shell: /bin/sh
+          command: docker-compose -f main/docker/docker-compose.yml -f main/docker/docker-compose.dev.yml --project-directory . --project-name oh run -v ~/overhide-ex-rate/test-report:/home/node/app/test-report -d oh-eth
+      - run:
+          shell: /bin/sh
+          command: sleep 10
+      - run:
+          shell: /bin/sh
+          command: docker exec `docker ps -q --filter name="oh-ex-rate"` npm run test-report
+      - store_test_results:
+          path: ./test-report
+      - store_artifacts:
+          path: ./test-report

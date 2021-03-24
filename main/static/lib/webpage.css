@@ -1,0 +1,151 @@
+@font-face {
+  font-familiy: Lato;
+  src: url('lib/font/lato-v14-latin-regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+html, body {
+  font-family: Lato;
+  font-size: 16px;
+  margin: 0px;
+}
+
+.balance-text {
+  max-width: 600px;
+  text-align: center;
+}
+
+.branding {
+  padding-top:20px;
+  padding-bottom:20px;
+  width:100vw;
+}
+
+.logo {
+  width: 150px;
+  margin-left: 40px;
+  margin-bottom: 24px;
+}
+
+.hero {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1100px;
+  width: 90%;
+  padding-top: 50px;
+  padding-left: 20px;
+}
+
+.main-hero {
+  font-size: 70px;
+  font-weight: 700;  
+  margin-bottom: 28px;
+  height: 76px;
+  line-height: 76px;
+}
+
+.sub-hero {
+  opacity: 0.5;
+  font-style: italic;
+  margin-top: 16px;
+}
+
+.ui.space-top {
+  margin-top: 37px;
+}
+
+.ui.space-top2x {
+  margin-top: 75px;
+}
+
+.ui.vertical.space-top4x {
+  margin-top: 150px;
+}
+
+.ui.vertical.banner {
+  padding: 3em 0em;
+  color: white;
+  background: #13a8bf;
+  text-align: center;
+}
+
+.ui.vertical.stripe {
+  padding: 4em 0em;
+}
+
+.ui.vertical.section {
+  padding: 2em 0em;
+}
+
+.footer.segment {
+  padding: 5em 0em;
+}
+
+.ui.vertical.footer {
+  color: white;
+  background: #13a8bf;
+}
+
+.ui.vertical.footer a {
+  color: white;
+}
+
+.ui.vertical.footer a:hover {
+  color: black;
+}
+
+.ui.button.button-nag {
+  font-variant: small-caps;
+}
+
+.ui.cookie.nag i.close.icon {
+  top: 15%;
+}
+
+.ui.button.button-link {
+  color: #13a8bf !important;
+  border-color: #13a8bf !important;
+  font-variant: small-caps;
+  width: 100%;
+  min-height: 3.6em;
+}
+
+.ui.button.button-link:hover {
+  color: black !important;
+}
+
+.column.full-height {
+  height: 100%;
+}
+
+.ui.inline.cookie {
+  position: fixed;
+  bottom: 0;
+  top: unset;
+  left: 0;
+  z-index: 150;
+}
+
+.ui.steps {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.ui.steps .step .content {
+  height: 100%;
+}
+
+.step {
+  width: 15em;
+}
+
+.confirmations {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.confirmations .checkbox {
+  margin-bottom: 25px;
+}

@@ -1,0 +1,10 @@
+version: '3.2'
+services:
+  oh-ledger:
+    build: 
+      context: .
+      dockerfile: ./main/docker/Dockerfile
+    image: oh-ex-rate
+    container_name: oh-ex-rate
+    ports:
+    - "8110:8110"

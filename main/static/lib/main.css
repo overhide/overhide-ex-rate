@@ -1,0 +1,457 @@
+@font-face {
+  font-familiy: Lato;
+  src: url('lib/font/lato-v14-latin-regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+html, body {
+  font-family: Lato;
+  font-variant: small-caps;
+  font-size: 20px;
+  width: 100vw;
+  height: 100vh;
+  margin: 0px;
+  overflow: hidden;
+}
+
+#swagger-container {
+  font-variant: normal;
+}
+
+.logo {
+  position: absolute;
+  height: 3.7vmax;
+  z-index: 50;
+}
+
+.inverted a {
+  color: #13a8bf;
+  font-weight: bold;
+}
+
+.ui.ohcolor.label, .ui.ohcolor.labels .label, .ui.ohcolor.button, .ui.ohcolor.buttons .button {
+  background-color: #13a8bf !important;
+  border-color: #13a8bf !important;
+  color: #fff !important;
+}
+
+i.icon.ohcolor {
+  color: #13a8bf !important;
+}
+
+#loading {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: fixed;
+  display: block;
+  opacity: 1;
+  background-color: #fff;
+  z-index: 99;
+  text-align: center;
+}
+
+#loading-image {
+ position: absolute;
+ top: 30%;
+ left: calc(50% - 32px);
+ z-index: 100;
+ width: 64px;
+ -webkit-animation:spin 3s linear infinite;
+ -moz-animation:spin 3s linear infinite;
+ animation:spin 3s linear infinite; 
+}
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+#loading h4 {
+  position: absolute;
+  top: 35%;
+  left: 0;
+  width: 100%;
+  align-content: center;
+  z-index: 100; 
+}
+
+.modal {
+  max-height: 75vh;
+  max-width: 80vw;
+}
+
+.ui.modal * {
+  font-size: 2vmin !important;
+}
+
+.ui.modal .header {
+  padding: 3vmin !important;
+}
+
+div.ui.modal i.close.icon {
+  float: right;
+  cursor: pointer;
+}
+
+@media (orientation: landscape) {
+  .logo {
+    top: 20px;
+    left: calc(12.5% - 7vmax);
+  }
+
+  .title>h1 {
+    left: calc(12.5% + 1.5vmax);
+    top: 20px;
+  }
+
+  .left {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+  }
+  .right {
+    position: absolute;
+    width: 75%;
+    height: 100%;
+    left: 25%;
+    top: 0px;
+    bottom: 0px;
+    z-index: 1;
+  }
+  .right > div {
+    width: 50vw;
+    height: 100%;
+  }
+
+  .right.infographic-exposed {
+    left: 50%;
+  }
+
+  #switch-to-get-paid, #switch-to-pay-someone {
+    margin-top: 5px;
+    margin-left: 5px;
+
+    left: calc(12.5% - 7em);
+    top: 8vmax;
+    font-size: 1.5vmax;
+
+    -webkit-transition: left .4s, top .4s, width .4s, height .4s, font-size .4s;
+    transition: left .4s, top .4s, width .4s, height .4s, font-size .4s;
+  }
+
+  #switch-to-get-paid.infographic-exposed, #switch-to-pay-someone.infographic-exposed {
+    left: calc(25% - 4em);
+    top: 20px;
+    font-size: 1vmax;
+  }
+
+  #pay-someone-infographic-nav, #get-paid-infographic-nav {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    padding-top: 200px;
+  }
+}
+
+@media (orientation: portrait) {
+  .logo {
+    top: 10px;
+    left: 1vmax;
+  }
+
+  .title>h1 {
+    left: 9vmax;
+    top: 10px;
+  }
+
+  .left {
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    top: 0px;
+    left: 0px;
+  }
+  .right {
+    position: absolute;
+    top: 25%;
+    left: 0px;
+    width: 100%;
+    height: 75%;
+    z-index: 1;
+  }
+
+  .right > div {
+    width: 100%;
+    height: 50vh;
+  }
+
+  .right.infographic-exposed {
+    top: 50%;
+  }
+
+  #switch-to-get-paid, #switch-to-pay-someone {
+    right: 0px;
+    margin-top: 10px;
+    margin-right: 10px;
+    font-size: 1vmax;
+  }
+
+  #pay-someone-infographic-nav, #get-paid-infographic-nav {
+    width: 100%;
+    height: 50%;
+    align-items: center;
+  }
+}
+
+.content-box > .segment {
+  padding-right: 5%;
+  padding-left: 5%;
+}
+
+#switch-to-get-paid, #switch-to-pay-someone { 
+  position: absolute;
+  z-index: 90;
+  font-variant: small-caps;
+  padding: 5px;
+  opacity: 0;
+  cursor: none;
+  pointer-events: none;
+  width: 14em;
+}
+
+#pay-someone-infographic-nav, #get-paid-infographic-nav {
+  display: flex;
+  justify-content: center; 
+}
+
+#pay-someone-infographic-nav > i, #get-paid-infographic-nav > i {
+  cursor: pointer;
+}
+
+#pay-someone-infographic > button, #get-paid-infographic > button {
+  font-variant: small-caps;
+}
+
+#pay-someone-infographic, #get-paid-infographic {
+  width: 100%;
+  height: 100%;
+}
+
+.left i.close.icon {
+  position: absolute;
+  top: 10px;
+  right: 50px;
+  cursor: pointer;
+}
+
+.right {
+  background: #000000;
+  -webkit-transition: left .6s, top .6s;
+  transition: left .6s, top .6s;
+}
+
+.ui.inverted.segment {
+  background: #000000 !important;
+}
+
+.content-box {
+  padding-top: 0px;
+  height: 934px;
+  width: 934px;
+}
+
+.left .content-box {
+  padding-top: 90px;  
+}
+
+.row {
+  margin-left: 10%;
+  margin-right:10%;
+  margin-top: 20px;
+}
+
+.ui.row.input > input:read-only {
+  background-color: #BBFFFF;
+}
+
+.ui.row.input > .ui.label, .ui.row.input > input {
+  padding: 5px;
+}
+
+.row > .ui.button {
+  padding-top: 5px;
+  padding-bottom: 7px;
+}
+
+.error-text {
+  height: 3rem;
+  overflow: hidden;
+}
+
+.status-text {
+  color: lightgrey;
+  height: 10rem;
+  overflow: hidden;
+  font-variant: normal;
+}
+
+#questions {
+    position: fixed;
+    top: 680px;
+}
+
+.ui.label {
+  width: 10em;
+}
+
+.buttons, .buttons > .button {
+  padding: 5px;
+  height: 32px;
+}
+
+.buttons > .or {
+  top: -10px;
+}
+
+.buttons > .button {
+  font-family: Lato;
+  font-variant: small-caps;
+  font-size: 20px;
+  width: 10em;  
+}
+
+#gratis-content, #ledger-content, #void-content {
+  border: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 75vh;
+}
+
+#retarget-provider-modal p, #retarget-subscriber-modal p, #pay-confirm-modal p, #register-confirm-modal p {
+  font-variant: normal;
+}
+
+#retarget-subscriber-modal input:read-only, #pay-confirm-modal input:read-only, #register-confirm-modal input:read-only {
+  color: lightcoral;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: lightgrey;
+  color: black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.invisible {
+  display: none;
+}
+
+.infographic-loader {
+  top: 200px;
+  opacity: 0;
+}
+
+/* Indicator arrows for svg image maps: see linkIndicatorsToImageMaps(..) */
+
+svg {
+  font-family: Arial, Helvetica, sans-serif;
+  font-variant: normal;
+  margin-top: 40px;
+}
+
+svg a:hover {
+  font-weight: bolder;
+  cursor: help;
+}
+
+svg a.indicatorBolden {
+  animation-name: bolden-alternate;
+  animation-duration: .75s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes bolden-alternate {
+  from {font-weight: normal;}
+  to {font-weight: bolder;}
+}
+
+.right img {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+  margin-top: -15px;
+}
+
+.indicatorPopup:before {
+  content: url('/lib/indicator.png');
+  display: inline-block;
+  position: absolute;
+  width: 0px;
+  height: 0px;
+  left: -55px;
+  top: -73px;
+}
+
+span.popup-check-wallet {
+  position: relative;
+}
+
+span.popup-check-wallet > img {
+  position: absolute;
+  margin-top: -75px;
+  margin-left: 40px;
+  z-index: 4;
+  width: 125px;
+}
+
+span.popup-check-wallet#gratis-check-wallet > img {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+  margin-top: -63px;
+  margin-left: 0px;
+}
+
+span#start-here {
+  position: relative;
+}
+
+span#start-here > span {
+  position: absolute;
+  margin-left: 20px;
+  padding: 5px;
+  width: 5.5em;
+}
+
+.indicator {
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+.indicator > span {
+  position:absolute;
+  width: 0;
+  height: 0;
+}
