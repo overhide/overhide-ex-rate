@@ -1,4 +1,8 @@
 {
+  "engines": {
+    "node": ">=12.21.0",
+    "npm": ">=6.14.11"
+  },
   "name": "overhide-ex-rate",
   "version": "1.0.0",
   "description": "Exchange rate provider between overhide imparters (supported currencies) and US dollars.",
@@ -27,7 +31,7 @@
     "express": "4.16.4",
     "express-rate-limit": "3.3.2",
     "js-yaml": "3.13.1",
-    "license-compatibility-checker": "0.3.3",
+    "license-compatibility-checker": "0.3.5",
     "node-fetch": "2.3.0",
     "pg": "7.7.1",
     "qs": "6.6.0",

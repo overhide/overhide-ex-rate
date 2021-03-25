@@ -59,7 +59,7 @@ const timestamp = require('../../main/js/lib/timestamp.js').init();
 const rates = require('../../main/js/lib/rates.js').init();
 const service = require('../../main/js/lib/service.js').init();
 
-xdescribe('service tests', () => {
+describe('service tests', () => {
 
   /**************/
   /* The tests. */
