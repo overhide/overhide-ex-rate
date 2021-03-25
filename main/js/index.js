@@ -276,7 +276,7 @@ async function onHealthCheck() {
     log('DB ERROR :: ' + dbError);
     throw new HealthCheckError('healtcheck failed', [dbError])
   }
-  const rateError = await rate.getError();
+  const rateError = await rates.getError();
   if (rateError) {
     log('RATE ERROR :: ' + rateError);
     throw new HealthCheckError('healtcheck failed', [rateError])

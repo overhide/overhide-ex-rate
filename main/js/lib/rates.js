@@ -112,7 +112,7 @@ class Normalize {
    async getError() {
     this[checkInit]();
     try {
-      await CoinGecko.ping();
+      await CoinGeckoClient.ping();
       return null;
     } catch (err) {
       log(`not healthy: ${String(err)}`);
