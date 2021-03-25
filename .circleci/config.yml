@@ -10,7 +10,7 @@ jobs:
           shell: /bin/sh
           command: |
             printf "DEBUG=overhide-ex-rate*\n" > .npmrc.dev;
-            printf "POSTGRES_HOST=localhost\n" >> .npmrc.dev;
+            printf "POSTGRES_HOST=postgres\n" >> .npmrc.dev;
             printf "POSTGRES_PORT=5432\n" >> .npmrc.dev;
             printf "POSTGRES_DB=oh-ex-rate\n" >> .npmrc.dev;
             printf "POSTGRES_USER=adam\n" >> .npmrc.dev;
