@@ -102,9 +102,9 @@ app.get('/swagger.json', throttle, (req, res) => {
  *   get:
  *     summary: Retrieve exchange rates between a currency and US dollars.
  *     description: | 
- *       Retrieve exchange rates between a currency and US dollars at a number of ISO 8601 parsable UTC timestamps (with 'Z' at end).
+ *       Retrieve minimum and maximum exchange rates between a currency and US dollars at a number of ISO 8601 parsable UTC time-stamps (with 'Z' at end).
  * 
- *       All passed in timestamps will be floored to the nearest minute when returned.
+ *       Each time-stamp is considered an end of a 3 hour time-window sampled for a minimum and maximum exchange rate between `currency` and US dollars.
  *     parameters:
  *       - in: path
  *         name: currency
@@ -123,15 +123,15 @@ app.get('/swagger.json', throttle, (req, res) => {
  *         schema:
  *           type: string
  *         description: |
- *            Comma separated list of ISO 8601 UTC timestamps matching the pattern 'YYYY-MM-DDThh:mm:ss.fffZ'
+ *            Comma separated list of ISO 8601 UTC time-stamps matching the pattern 'YYYY-MM-DDThh:mm:ss.fffZ'
  * 
- *            Each timestamp is a string in [ISO 8601/RFC3339 format](https://xml2rfc.tools.ietf.org/public/rfc/html/rfc3339.html#anchor14).
+ *            Each time-stamp is a string in [ISO 8601/RFC3339 format](https://xml2rfc.tools.ietf.org/public/rfc/html/rfc3339.html#anchor14).
  *     produces:
  *       - application/json
  *     responses:
  *       200:
  *         description: |
- *           JSON list of objects `[{timestamp: <ISO8601 timestamp>, minrate: <float>, maxrate: <float>},..]` whereby `minrate` indicates
+ *           JSON list of objects `[{timestamp: <UNIX time (epoch) millis>, minrate: <float>, maxrate: <float>},..]` whereby `minrate` indicates
  *           the lowest conversion rate between *currency* and USD seen within a time window (configurable by service) until the `timestamp`
  *           and `maxrate` indicates the highest conversion rate within same.
  *       401:
@@ -143,6 +143,120 @@ app.get('/rates/:currency/:timestamps', throttle, token, async (req, res, next) 
   if (await service.get(req, res)) {
     next();
   };
+});
+
+/**
+ * @swagger
+ * /tallymin/{currency}/{values}:
+ *   get:
+ *     summary: Retrieve a tally in US dollars converted at a minimum estimated exchange-rate from a stream of time-stamped-values in the provided currency.
+ *     description: | 
+ *       Retrieve a tally in US dollars converted at a minimum estimated exchange-rate from a stream of time-stamped-values.  A time-stamped-value is
+ *       a value transfer at some time-stamp.  There is a certain exchange-rate between `currency` and US dollars at each particular time-stamp.  The
+ *       exchange rate fluctuates and may have been different within some time-window before the transaction.  This call will take the lowest known
+ *       exchange rate during the time-window leading up to a transaction and apply it to the transaction.  Each transaction has its own unique
+ *       exchange rate as it has its own unique time-window.
+ * 
+ *       The result is a minimum converted value in US dollars.
+ * 
+ *       At present this services uses a time-window of 3 hours leading up to each transaction.  
+ * 
+ *     parameters:
+ *       - in: path
+ *         name: currency
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: |
+ *            Currency and denomination of the time-stamped-values.
+ * 
+ *            Supported currencies/denominations:
+ * 
+ *              * "eth" -- ethers
+ *              * "wei" -- ethereum `wei`
+ *       - in: path
+ *         name: values
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: |
+ *            Comma separated list of ISO 8601 UTC time-stamps matching the pattern 'YYYY-MM-DDThh:mm:ss.fffZ' prefixed with a `<amount>@`
+ *            `currency` value.  E.g. `1200000000000000000@2020-01-04T11:00:00.000Z` for a currency of `wei` signifies a transaction of 1.2 ethers
+ *            on April first at 11 (UTC).            
+ * 
+ *            Each time-stamp is a string in [ISO 8601/RFC3339 format](https://xml2rfc.tools.ietf.org/public/rfc/html/rfc3339.html#anchor14).
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: |
+ *           A minimum US dollar tally of the transaction stream.
+ *       401:
+ *         description: |
+ *            These APIs require bearer tokens to be furnished in an 'Authorization' header as 'Bearer ..' values.  The tokens are to be retrieved from
+ *            [https://token.overhide.io](https://token.overhide.io).
+ */
+app.get('/tallymin/:currency/:values', throttle, token, async (req, res, next) => {
+  if (await service.tallyMin(req, res)) {
+    next();
+  }
+});
+
+/**
+ * @swagger
+ * /tallymax/{currency}/{values}:
+ *   get:
+ *     summary: Retrieve a tally in US dollars converted at a maximum estimated exchange-rate from a stream of time-stamped-values in the provided currency.
+ *     description: | 
+ *       Retrieve a tally in US dollars converted at a maximum estimated exchange-rate from a stream of time-stamped-values.  A time-stamped-value is
+ *       a value transfer at some time-stamp.  There is a certain exchange-rate between `currency` and US dollars at each particular time-stamp.  The
+ *       exchange rate fluctuates and may have been different within some time-window before the transaction.  This call will take the highest known
+ *       exchange rate during the time-window leading up to a transaction and apply it to the transaction.  Each transaction has its own unique
+ *       exchange rate as it has its own unique time-window.
+ * 
+ *       The result is a maximum converted value in US dollars.
+ * 
+ *       At present this services uses a time-window of 3 hours leading up to each transaction.  
+ * 
+ *     parameters:
+ *       - in: path
+ *         name: currency
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: |
+ *            Currency and denomination of the transactions.
+ * 
+ *            Supported currencies/denominations:
+ * 
+ *              * "eth" -- ethers
+ *              * "wei" -- ethereum `wei`
+ *       - in: path
+ *         name: values
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: |
+ *            Comma separated list of ISO 8601 UTC time-stamps matching the pattern 'YYYY-MM-DDThh:mm:ss.fffZ' prefixed with a `<amount>@`
+ *            `currency` value.  E.g. `1200000000000000000@2020-01-04T11:00:00.000Z` for a currency of `wei` signifies a transaction of 1.2 ethers
+ *            on April first at 11 (UTC).            
+ * 
+ *            Each time-stamp is a string in [ISO 8601/RFC3339 format](https://xml2rfc.tools.ietf.org/public/rfc/html/rfc3339.html#anchor14).
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: |
+ *           A maximum US dollar tally of the transaction stream.
+ *       401:
+ *         description: |
+ *            These APIs require bearer tokens to be furnished in an 'Authorization' header as 'Bearer ..' values.  The tokens are to be retrieved from
+ *            [https://token.overhide.io](https://token.overhide.io).
+ */
+app.get('/tallymax/:currency/:values', throttle, token, async (req, res, next) => {
+  if (await service.tallyMax(req, res)) {
+    next();
+  };  
 });
 
 // SERVER LIFECYCLE

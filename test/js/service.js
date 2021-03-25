@@ -124,5 +124,65 @@ describe('service tests', () => {
       resultAsTuples = await service.get(req, res);
     })();
   });
+
+  it('should tallyMin() smoke -- multiple timestamps', (done) => {
+    (async () => {
+
+      req = {
+        params: {
+          currency: 'eth',
+          values: 
+            '0.5@' + (new Date(baseTime)).toISOString()                  // 1/2  ether
+            + ',0.25@' + (new Date(baseTime - hour * 2)).toISOString()    // 1/4  ether
+            + ',0.1@' + (new Date(baseTime - hour * 3)).toISOString()    // 1/10 ether
+        }
+      }
+
+      res = {
+        status: (code) => {
+          return {
+            send: (result) => {
+              if (code == 200)  {
+                assert.isTrue(result == 3.35);                 
+                done();
+              };    
+            }
+          }
+        }        
+      }
+  
+      resultAsTuples = await service.tallyMin(req, res);
+    })();
+  });
+
+  it('should tallyMax() smoke -- multiple timestamps', (done) => {
+    (async () => {
+
+      req = {
+        params: {
+          currency: 'wei',
+          values: 
+            '500000000000000000@' + (new Date(baseTime)).toISOString()                  // 1/2  ether
+            + ',250000000000000000@' + (new Date(baseTime - hour * 2)).toISOString()    // 1/4  ether
+            + ',100000000000000000@' + (new Date(baseTime - hour * 3)).toISOString()    // 1/10 ether
+        }
+      }
+
+      res = {
+        status: (code) => {
+          return {
+            send: (result) => {
+              if (code == 200)  {  
+                assert.isTrue(result == 6.35);               
+                done();
+              };    
+            }
+          }
+        }        
+      }
+  
+      resultAsTuples = await service.tallyMax(req, res);
+    })();
+  });  
 })
 

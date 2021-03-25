@@ -68,7 +68,7 @@ class Timestamp {
   /**
    * @param {[number]} timestamps -- list of timestamps to retrieve min/max ratest for
    * @param {[number]:number} ratesByEpoch  -- hash table of currency to USD rates by epoch time (millis): must have epoch keys to cover the whole expanded time window
-   * @returns {[{timestamp: <ISO8601 timestamp>, minrate: <float>, maxrate: <float>},..]} whereby `minrate` indicates
+   * @returns {[{timestamp: <number (epoch time millis)>, minrate: <float>, maxrate: <float>},..]} whereby `minrate` indicates
    *           the lowest conversion rate between *currency* and USD seen within a time window  until the `timestamp`
    *           and `maxrate` indicates the highest conversion rate within same.
    */
