@@ -17,7 +17,7 @@ Supported *overhide* currencies:
 1. `npm run compose-dev`
 1. jump to "First Time DB Setup" section for the first-time DB setup
 1. jump to "Database Evolutions" section, especially the "For Docker" subsection
-1. your *oh-ex-rate* container failed since your DB wasn't setup--now it is--find your *oh-ledger* container name: `docker ps -a`; look for *oh-ex-rate* with an "Exited" status.
+1. your *oh-ex-rate* container failed since your DB wasn't setup--now it is--find your *oh-ex-rate* container name: `docker ps -a`; look for *oh-ex-rate* with an "Exited" status.
 1. start it again: `docker start <container name>`
 1. do a `docker logs <container name>` to make sure it's up
 1. browse to http://localhost:8110/swagger.html
