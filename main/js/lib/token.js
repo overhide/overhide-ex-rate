@@ -76,7 +76,7 @@ class Token {
       this[failToken](`no auth header`, res, next);
       return;
     }
-
+    
     const tokenParts = authHeader.split(' ');
     if (tokenParts.length < 2) {
       this[failToken](`missing token part`, res, next);
@@ -134,6 +134,7 @@ class Token {
    */
   isValidLocal(token)  {
     try {
+      token = decodeURIComponent(token);
       token = new Buffer(token, 'base64');  
       token = crypto.symmetricDecrypt(token, this[ctx].salt);
       token = JSON.parse(token);
