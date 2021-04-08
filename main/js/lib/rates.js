@@ -7,6 +7,8 @@ const CoinGeckoClient = new CoinGecko();
 
 // private attribtues
 const ctx = Symbol('context');
+const metrics = Symbol('metrics');
+
 const lookbackMillis = Symbol('lookbackMillis');
 const floorCoefficient = Symbol('floorCoefficient');
 const period = Symbol('period');
@@ -65,6 +67,14 @@ class Normalize {
    */
   init() {
     this[ctx] = {};
+
+    this[metrics] = {
+      errors: 0,
+      previousErrors: 0,
+      errorsDelta: 0,
+      requests: 0
+    };
+
     return this;
   }
 
@@ -74,50 +84,52 @@ class Normalize {
    * @returns {[{timestamp: number, rate: float},..]} list of timestamp+rate objects: could be for more timestamps than passed in.
    */
   async get(currency, timestamps) {
-    currency = this[mapCurrencyToCoinGecko](currency);
-    const orderedEpochsRecentToAncient = timestamps
-      .map(t => t.getTime())
-      .map(t => this[roundToPeriod](t))
-      .sort((a,b) => b - a);
-    const rates = {};
-    for (const epoch of orderedEpochsRecentToAncient) {
-      if (epoch in rates) continue;
-      var fromEpoch = epoch - this[lookbackMillis];
-      log(`processing data for ${currency} from ${(new Date(fromEpoch)).toISOString()} to ${(new Date(epoch)).toISOString()}`);
-      const data = (await CoinGeckoClient.coins.fetchMarketChartRange(currency, {from: fromEpoch / 1000, to: epoch / 1000, vs_currency: 'usd'})).data;
-      if (! ('prices' in data)) break;
-      if (! Array.isArray(data.prices) || data.prices.length === 0) break;
-      const pricesInMillis = data.prices;
-      var pricesInDescendingEpochOrder = pricesInMillis.sort((a, b) => b[0] - a[0]);
-      let currentEpoch = epoch;
-      while (currentEpoch >= fromEpoch) {
-        while (pricesInDescendingEpochOrder.length > 0) {
-          if (pricesInDescendingEpochOrder[0][0] > currentEpoch) {
-            pricesInDescendingEpochOrder = pricesInDescendingEpochOrder.slice(1);
-          } else {
-            rates[currentEpoch] = pricesInDescendingEpochOrder[0][1];
-            break;
+    try {
+      currency = this[mapCurrencyToCoinGecko](currency);
+      const orderedEpochsRecentToAncient = timestamps
+        .map(t => t.getTime())
+        .map(t => this[roundToPeriod](t))
+        .sort((a,b) => b - a);
+      const rates = {};
+      for (const epoch of orderedEpochsRecentToAncient) {
+        if (epoch in rates) continue;
+        var fromEpoch = epoch - this[lookbackMillis];
+        log(`processing data for ${currency} from ${(new Date(fromEpoch)).toISOString()} to ${(new Date(epoch)).toISOString()}`);
+        const data = (await CoinGeckoClient.coins.fetchMarketChartRange(currency, {from: fromEpoch / 1000, to: epoch / 1000, vs_currency: 'usd'})).data;
+        if (! ('prices' in data)) break;
+        if (! Array.isArray(data.prices) || data.prices.length === 0) break;
+        const pricesInMillis = data.prices;
+        var pricesInDescendingEpochOrder = pricesInMillis.sort((a, b) => b[0] - a[0]);
+        let currentEpoch = epoch;
+        while (currentEpoch >= fromEpoch) {
+          while (pricesInDescendingEpochOrder.length > 0) {
+            if (pricesInDescendingEpochOrder[0][0] > currentEpoch) {
+              pricesInDescendingEpochOrder = pricesInDescendingEpochOrder.slice(1);
+            } else {
+              rates[currentEpoch] = pricesInDescendingEpochOrder[0][1];
+              break;
+            }
           }
+          if (pricesInDescendingEpochOrder.length === 0 ) break;
+          currentEpoch -= this[period];
         }
-        if (pricesInDescendingEpochOrder.length === 0 ) break;
-        currentEpoch -= this[period];
-      }
-    }    
-    return Object.keys(rates).map(k => {return {timestamp: +k, rate: rates[k]};});
+      }  
+      this[metrics].requests++;  
+      return Object.keys(rates).map(k => {return {timestamp: +k, rate: rates[k]};});  
+    } catch (err) {
+      log(`error ${err}`);
+      this[metrics].error++;
+    }
   }
 
   /**
-   * @returns {string} null if no error else error string if problem using DB from connection pool.
+   * @returns {{errors:.., errorsDelta:.., requests:..}} metrics object.
    */
-   async getError() {
+  getMetrics() {
     this[checkInit]();
-    try {
-      await CoinGeckoClient.ping();
-      return null;
-    } catch (err) {
-      log(`not healthy: ${String(err)}`);
-      return String(err);
-    } 
+    this[metrics].errorsDelta = this[metrics].errors - this[metrics].previousErrors;
+    this[metrics].previousErrors = this[metrics].errors;
+    return this[metrics];
   }  
 }
 

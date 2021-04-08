@@ -276,15 +276,15 @@ async function onHealthCheck() {
     log('DB ERROR :: ' + dbError);
     throw new HealthCheckError('healtcheck failed', [dbError])
   }
-  const rateError = await rates.getError();
-  if (rateError) {
-    log('RATE ERROR :: ' + rateError);
-    throw new HealthCheckError('healtcheck failed', [rateError])
+  const rateMetrics = rates.getMetrics();
+  if (rateMetrics.errorsDelta > 0) {
+    log('RATE ERROR :: ' + JSON.stringify(rateMetrics));
+    throw new HealthCheckError('healtcheck failed', JSON.stringify(rateMetrics))
   }
   let status = {
     version: VERSION,
     database: 'OK',
-    rate: 'OK'
+    rate: rateMetrics
   };
   return status;
 }
