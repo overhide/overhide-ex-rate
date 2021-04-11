@@ -71,7 +71,11 @@ class Swagger {
         host: ${this[ctx].base_url}
         basePath: /
         info:
-          description: |          
+          description: |
+            <hr/>         
+            <a href="https://overhide.io" target="_blank">overhide.io</a> is a free and open-sourced (mostly) ecosystem of widgets, a front-end library, and back-end services &mdash; to make addition of "logins" and "in-app-purchases" (IAP) to your app as banal as possible.
+            <hr/><br/>
+
             API to retrieve exchange rates between specified currencies and US dollars.
 
             This API is written in support of other APIs and widgets for [https://overhide.io](https://overhide.io) and the [ledgers.js](https://www.npmjs.com/package/ledgers.js) library.
