@@ -282,6 +282,7 @@ async function onHealthCheck() {
     throw new HealthCheckError('healtcheck failed', JSON.stringify(rateMetrics))
   }
   let status = {
+    host: os.hostname(),
     version: VERSION,
     database: 'OK',
     rate: rateMetrics
