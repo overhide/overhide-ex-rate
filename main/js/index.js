@@ -117,6 +117,9 @@ app.get('/swagger.json', throttle, (req, res) => {
  *            Supported currencies:
  * 
  *              * "eth" -- ethers
+ *              * "wei" -- ethereum `wei`
+ *              * "btc" -- bitcoin
+ *              * "sat" -- bitcoin `satoshis`
  *       - in: path
  *         name: timestamps
  *         required: true
@@ -174,6 +177,8 @@ app.get('/rates/:currency/:timestamps', throttle, token, async (req, res, next) 
  * 
  *              * "eth" -- ethers
  *              * "wei" -- ethereum `wei`
+ *              * "btc" -- bitcoin
+ *              * "sat" -- bitcoin `satoshis`
  *       - in: path
  *         name: values
  *         required: true
@@ -231,6 +236,8 @@ app.get('/tallymin/:currency/:values', throttle, token, async (req, res, next) =
  * 
  *              * "eth" -- ethers
  *              * "wei" -- ethereum `wei`
+ *              * "btc" -- bitcoin
+ *              * "sat" -- bitcoin `satoshis`
  *       - in: path
  *         name: values
  *         required: true

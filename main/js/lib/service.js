@@ -10,8 +10,12 @@ const ctx = Symbol('context');
 
 // private functions
 const checkInit = Symbol('checkInit');
+const validateCurrency = Symbol('validateCurrency');
+const getRateParams = Symbol('getTallyParams');
 const getTallyParams = Symbol('getTallyParams');
 const getRates = Symbol('getRates');
+const getBaseCurrency = Symbol('validateCurrency');
+const getRateMultiplier = Symbol('getRateMultiplier');
 
 /**
  * Wires up functionality we use throughout.
@@ -33,6 +37,13 @@ class Service {
   }
 
   /**
+   * @param {*} currency 
+   */
+  [validateCurrency](currency) {
+    if (!currency || typeof currency !== 'string' || !currency.match(/eth|wei|btc|sat/)) throw `invalid currency, only 'eth', 'wei', 'btc', 'sat' supported`;
+  }
+
+  /**
    * @param {{params: {currency:.., values:[..]}}} req -- the request
    * @param {string} prefix -- for tracing
    * @returns {[currency, values]} parsed out and vetted params
@@ -43,11 +54,54 @@ class Service {
     var currency = params['currency'];      
     var values = params['values'];
     debug(`GET /${prefix} <= %o`, params);
-    if (!currency || typeof currency !== 'string' || !currency.match(/eth|wei/)) throw `invalid currency, only 'eth' or 'wei' supported`;
+    this[validateCurrency](currency);
     if (!values || typeof values !== 'string') throw `invalid values, must be a comma separated list of values at ISO8601 strings`;
     values = values.split(',');
     if (values.some(t => !t.match(/[0-9]+(.[0-9]+)?@....-..-..[tT ]..:..:..(\..+)?Z/))) throw `not all values match '<amount>@YYYY-MM-DDThh:mm:ss.mmmZ'`;      
     return [currency, values];
+  }
+
+  /**
+   * @param {{params: {currency:.., values:[..]}}} req -- the request
+   * @returns {[currency, timestamps]} parsed out and vetted params
+   * @throws string exceptions on validation error.
+   */
+  [getRateParams](req) {
+    var params = req.params;
+    var currency = params['currency'];      
+    var timestamps = params['timestamps'];
+    debug('GET /rates <= %o', params);
+    this[validateCurrency](currency);
+    if (!timestamps || typeof timestamps !== 'string') throw `invalid timestamps, must be a comma separated list of ISO8601 strings`;
+    timestamps = timestamps.split(',');
+    if (timestamps.some(t => !t.match(/....-..-..[tT ]..:..:..(\..+)?Z/))) throw `not all timestamps match 'YYYY-MM-DDThh:mm:ss.mmmZ'`;      
+    return [currency, timestamps];
+  }
+  
+  /**
+   * @param {string} currency -- to validate
+   * @throws if currency invalid
+   * @returns {string} base currency, e.g. 'eth' or 'btc' instead of lower denominations
+   */
+  [getBaseCurrency](currency) {
+    if (['eth','wei'].includes(currency)) return 'eth';
+    if (['btc','sat'].includes(currency)) return 'btc';
+    throw `invalid currency`;
+  }
+
+  /**
+   * @param {string} currency -- to get rate multiplier for (must be lowercase)
+   * @returns {number} rate multiplier from base currency to denomination as per 'currency'
+   */
+  [getRateMultiplier](currency) {
+    switch(currency) {
+      case 'wei':
+        return 1 / 1000000000000000000;          
+      case 'sat':
+        return 1 / 100000000;
+      default:
+        return 1;
+    }    
   }
 
   /**
@@ -97,15 +151,18 @@ class Service {
   async get(req, res) {
     this[checkInit]();
     try {
-      var params = req.params;
-      var currency = params['currency'];      
-      var timestamps = params['timestamps'];
-      debug('GET /rates <= %o', params);
-      if (!currency || typeof currency !== 'string' || currency != 'eth') throw `invalid currency, only 'eth' supported`;
-      if (!timestamps || typeof timestamps !== 'string') throw `invalid timestamps, must be a comma separated list of ISO8601 strings`;
-      timestamps = timestamps.split(',');
-      if (timestamps.some(t => !t.match(/....-..-..[tT ]..:..:..(\..+)?Z/))) throw `not all timestamps match 'YYYY-MM-DDThh:mm:ss.mmmZ'`;      
-      res.status(200).send(await this[getRates](timestamps, currency));   
+      var [currency, timestamps] = this[getRateParams](req)
+      const baseCurrency = this[getBaseCurrency](currency);
+      var exchangeRates = await this[getRates](timestamps, baseCurrency);
+      switch (currency) {
+        case 'wei':
+          exchangeRates = exchangeRates.map(er => {return {...er, minrate: er.minrate / 1000000000000000000, maxrate: er.maxrate / 1000000000000000000}});
+          break;
+        case 'sat':
+          exchangeRates = exchangeRates.map(er => {return {...er, minrate: er.minrate / 100000000, maxrate: er.maxrate / 100000000}});
+          break
+      }
+      res.status(200).send(exchangeRates);   
       return true;       
     }
     catch (err) {
@@ -126,17 +183,19 @@ class Service {
   async tallyMin(req, res) {
     this[checkInit]();
     try {
-      const [currency, values] = this[getTallyParams](req, `tallyMin`);
+      var [currency, values] = this[getTallyParams](req, `tallyMin`);
       const timestamps = values.map(t => t.match(/[0-9.]+@(.+)/)[1]);
       const ratesByEpoch = {};
-      (await this[getRates](timestamps, 'eth')).forEach(r => ratesByEpoch[r.timestamp] = r);
-      const ethersRate = currency === 'wei' ? 1 / 1000000000000000000 : 1;
+      const baseCurrency = this[getBaseCurrency](currency);
+      currency = currency.toLowerCase();
+      (await this[getRates](timestamps, baseCurrency)).forEach(r => ratesByEpoch[r.timestamp] = r);
+      const rateMultiplier = this[getRateMultiplier](currency);
       const result = values.reduce((acc, curr) => {
         const matches = curr.match(/([0-9.]+)@(.+)/);
         const timestamp = Date.parse(matches[2]);
         const value = matches[1];
         const rate = ratesByEpoch[timestamp];
-        return acc + (value * ethersRate * rate.minrate);
+        return acc + (value * rateMultiplier * rate.minrate);
       }, 0);
       res.status(200).send((Math.round(result * 100) / 100).toFixed(2));   
       return true;       
@@ -158,17 +217,18 @@ class Service {
   async tallyMax(req, res) {
     this[checkInit]();
     try {
-      const [currency, values] = this[getTallyParams](req, `tallyMin`);
+      var [currency, values] = this[getTallyParams](req, `tallyMin`);
       const timestamps = values.map(t => t.match(/[0-9.]+@(.+)/)[1]);
       const ratesByEpoch = {};
-      (await this[getRates](timestamps, 'eth')).forEach(r => ratesByEpoch[r.timestamp] = r);
-      const ethersRate = currency === 'wei' ? 1 / 1000000000000000000 : 1;
+      const baseCurrency = this[getBaseCurrency](currency);
+      (await this[getRates](timestamps,baseCurrency)).forEach(r => ratesByEpoch[r.timestamp] = r);
+      const rateMultiplier = this[getRateMultiplier](currency);
       const result = values.reduce((acc, curr) => {
         const matches = curr.match(/([0-9.]+)@(.+)/);
         const timestamp = Date.parse(matches[2]);
         const value = matches[1];
         const rate = ratesByEpoch[timestamp];
-        return acc + (value * ethersRate * rate.maxrate);
+        return acc + (value * rateMultiplier * rate.maxrate);
       }, 0);
       res.status(200).send((Math.round(result * 100) / 100).toFixed(2));   
       return true;       

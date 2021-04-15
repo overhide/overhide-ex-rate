@@ -46,6 +46,8 @@ class Normalize {
     switch(currency) {
       case 'eth':
         return 'ethereum';
+      case 'btc':
+        return 'bitcoin';
       default:
         throw new `unsupported currency ${currency}`;
     }

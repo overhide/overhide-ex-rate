@@ -24,7 +24,7 @@ const db = new (require('pg').Client)(conn_details);
 
 db.connect();
 
-async function seed() {
+async function seedCurrency(currency, asOf) {
   require('../../main/js/lib/log.js').init({app_name:'db_evolve'});  
   const database = require('../../main/js/lib/database.js').init({
     pghost: POSTGRES_HOST,
@@ -34,21 +34,27 @@ async function seed() {
     pgpassword: POSTGRES_PASSWORD,
     pgssl: POSTGRES_SSL
   });
+  
   const timestamp = require('../../main/js/lib/timestamp.js').init();  
   const rates = require('../../main/js/lib/rates.js').init();
   const hour = 1000 * 60 * 60;
 
   const time = new Date();
-  const startOfEthereum = (new Date('2015-07-30T00:00:00.000Z')).getTime();
+  const startOfCurrency = (new Date(asOf)).getTime();
   timestamps = [];
-  while (time.getTime() > startOfEthereum) {
+  while (time.getTime() > startOfCurrency) {
     timestamps.push(new Date(time));
     time.setTime(time.getTime() - hour);
   }
 
-  const results = await rates.get('eth', timestamps);
-  console.log(`adding ${results.length} records`);
-  await database.addRates('eth', results);
+  const results = await rates.get(currency, timestamps);
+  console.log(`adding ${results.length} records :: ${currency}`);
+  await database.addRates(currency, results);  
+}
+
+async function seed() {
+  await seedCurrency('eth', '2015-07-30T00:00:00.000Z');
+  await seedCurrency('btc', '2013-04-27T00:00:00.000Z');
 }
 
 (async () =>  {
