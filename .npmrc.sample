@@ -13,3 +13,4 @@ POSTGRES_SSL=
 SELECT_MAX_ROWS=30
 SALT=c0c0nut
 TOKEN_URL=https://token.overhide.io/validate
+INTERNAL_TOKEN=

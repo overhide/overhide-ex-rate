@@ -2,7 +2,6 @@ const allow_cors = require('cors')();
 const http = require('http');
 const express = require('express');
 const {createTerminus: terminus, HealthCheckError} = require('@godaddy/terminus');
-const rateLimit = require("express-rate-limit");
 const ejs = require('ejs');
 const os = require('os');
 const path = require('path');
@@ -28,6 +27,7 @@ const POSTGRES_SSL = process.env.POSTGRES_SSL || process.env.npm_config_POSTGRES
 const SALT = process.env.SALT || process.env.npm_config_SALT || process.env.npm_package_config_SALT;
 const ISPROD = process.env.ISPROD || process.env.npm_config_ISPROD || process.env.npm_package_config_ISPROD || false;
 const TOKEN_URL = process.env.TOKEN_URL || process.env.npm_config_TOKEN_URL || process.env.npm_package_config_TOKEN_URL;
+const INTERNAL_TOKEN = process.env.INTERNAL_TOKEN || process.env.npm_config_INTERNAL_TOKEN || process.env.npm_package_config_INTERNAL_TOKEN || null;
 const URI = `${PROTOCOL}://${BASE_URL}`;
 const DOMAIN = BASE_URL.split(':')[0];
 
@@ -52,6 +52,7 @@ const ctx_config = {
   salt: SALT,
   isTest: !ISPROD,
   tokenUrl: TOKEN_URL,
+  internalToken: INTERNAL_TOKEN
 };
 const log = require('./lib/log.js').init(ctx_config).fn("app");
 const debug = require('./lib/log.js').init(ctx_config).debug_fn("app");
@@ -62,9 +63,11 @@ const database = require('./lib/database.js').init(ctx_config);
 const service = require('./lib/service.js').init(ctx_config);
 const swagger = require('./lib/swagger.js').init(ctx_config);
 const token = require('./lib/token.js').check.bind(require('./lib/token.js').init(ctx_config));
+const throttle = require('./lib/throttle.js').check.bind(require('./lib/throttle.js').init(ctx_config));
 log("CONFIG:\n%O", ((cfg) => {
   cfg.pgpassword = cfg.pgpassword.replace(/.(?=.{2})/g,'*'); 
   cfg.salt = cfg.salt.replace(/.(?=.{2})/g,'*'); 
+  cfg.internalToken = cfg.internalToken.replace(/.(?=.{2})/g,'*'); 
   return cfg;
 })({...ctx_config}));
 
@@ -82,12 +85,6 @@ app.set('views', __dirname + `${path.sep}..${path.sep}static`);
 app.engine('html', ejs.renderFile);
 app.engine('template', ejs.renderFile);
 app.use(allow_cors);
-
-// rate limiters
-const throttle = rateLimit({
-  windowMs: RATE_LIMIT_WINDOW_MS,
-  max: RATE_LIMIT_MAX_REQUESTS_PER_WINDOW
-});
 
 // ROUTES
 
@@ -142,7 +139,7 @@ app.get('/swagger.json', throttle, (req, res) => {
  *            These APIs require bearer tokens to be furnished in an 'Authorization' header as 'Bearer ..' values.  The tokens are to be retrieved from
  *            [https://token.overhide.io](https://token.overhide.io).
  */
-app.get('/rates/:currency/:timestamps', throttle, token, async (req, res, next) => {
+app.get('/rates/:currency/:timestamps', token, throttle, async (req, res, next) => {
   if (await service.get(req, res)) {
     next();
   };
@@ -201,7 +198,7 @@ app.get('/rates/:currency/:timestamps', throttle, token, async (req, res, next) 
  *            These APIs require bearer tokens to be furnished in an 'Authorization' header as 'Bearer ..' values.  The tokens are to be retrieved from
  *            [https://token.overhide.io](https://token.overhide.io).
  */
-app.get('/tallymin/:currency/:values', throttle, token, async (req, res, next) => {
+app.get('/tallymin/:currency/:values', token, throttle, async (req, res, next) => {
   if (await service.tallyMin(req, res)) {
     next();
   }
@@ -260,7 +257,7 @@ app.get('/tallymin/:currency/:values', throttle, token, async (req, res, next) =
  *            These APIs require bearer tokens to be furnished in an 'Authorization' header as 'Bearer ..' values.  The tokens are to be retrieved from
  *            [https://token.overhide.io](https://token.overhide.io).
  */
-app.get('/tallymax/:currency/:values', throttle, token, async (req, res, next) => {
+app.get('/tallymax/:currency/:values', token, throttle, async (req, res, next) => {
   if (await service.tallyMax(req, res)) {
     next();
   };  
