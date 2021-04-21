@@ -35,6 +35,7 @@
     "node-fetch": "2.3.0",
     "pg": "7.7.1",
     "qs": "6.6.0",
+    "rate-limit-redis": "2.1.0",
     "swagger-jsdoc": "^3.2.9",
     "uuid": "3.3.2"
   },
@@ -45,6 +46,8 @@
     "DEBUG": "",
     "RATE_LIMIT_WINDOW_MS": 1000,
     "RATE_LIMIT_MAX_REQUESTS_PER_WINDOW": 100,
+    "RATE_LIMIT_REDIS_URI": "",
+    "RATE_LIMIT_REDIS_NAMESPACE": "",
     "POSTGRES_HOST": "localhost",
     "POSTGRES_PORT": 5432,
     "POSTGRES_DATABASE": "",
@@ -74,6 +77,7 @@
     "build": "docker build -t oh-ex-rate -f main/docker/Dockerfile .",
     "compose-dev": "docker-compose -f main/docker/docker-compose.yml -f main/docker/docker-compose.dev.yml --project-directory . --project-name oh up -d",
     "psql-dev": "docker run -it --rm --link postgres:postgres -e PGPASSWORD=c0c0nut --network oh_default postgres psql -h postgres -U adam -d postgres",
+    "redis-cli": "docker exec -it redis redis-cli",
     "db-evolve": "node tools/db-evolve/db-evolve.js"
   }
 }

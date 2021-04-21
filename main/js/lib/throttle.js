@@ -9,6 +9,7 @@ const ctx = Symbol('context');
 // private functions
 const checkInit = Symbol('checkInit');
 const regularThrottle = Symbol('regularThrottle');
+const RedisStore = require("rate-limit-redis");
 
 /**
  * Wires up functionality we use throughout.
@@ -35,19 +36,24 @@ class Throttle {
    * 
    * @param {number} rateLimitMax
    * @param {number} rateLimitWindowsMs
+   * @param {string} rateLimitRedis
+   * @param {string} rateLimitRedisNamespace
    * @returns {Throttle} this
    */
-  init({rateLimitMax, rateLimitWindowsMs} = {}) {
+  init({rateLimitMax, rateLimitWindowsMs, rateLimitRedis, rateLimitRedisNamespace} = {}) {
     if (rateLimitMax == null || rateLimitWindowsMs == null) throw new Error("Both RATE_LIMIT_WINDOW_MS and RATE_LIMIT_MAX_REQUESTS_PER_WINDOW must be specified.");
 
     this[ctx] = {
-      rateLimitMax: rateLimitMax,
-      rateLimitWindowsMs, rateLimitWindowsMs
     };
 
     this[regularThrottle] = rateLimit({
-      windowMs: this[ctx].rateLimitWindowsMs,
-      max: this[ctx].rateLimitMax
+      store: new RedisStore({
+        expiry: rateLimitWindowsMs / 1000,
+        prefix: rateLimitRedisNamespace,
+        redisURL: rateLimitRedis
+      }),
+      windowMs: rateLimitWindowsMs,
+      max: rateLimitMax
     });
   
     return this;
