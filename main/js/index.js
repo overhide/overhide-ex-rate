@@ -106,6 +106,8 @@ app.get('/swagger.json', throttle, (req, res) => {
  *       Retrieve minimum and maximum exchange rates between a currency and US dollars at a number of ISO 8601 parsable UTC time-stamps (with 'Z' at end).
  * 
  *       Each time-stamp is considered an end of a 3 hour time-window sampled for a minimum and maximum exchange rate between `currency` and US dollars.
+ * 
+ *       Rate limits:  30 calls / minute / IP (across all overhide APIs)
  *     parameters:
  *       - in: path
  *         name: currency
@@ -165,6 +167,7 @@ app.get('/rates/:currency/:timestamps', token, throttle, async (req, res, next) 
  * 
  *       At present this services uses a time-window of 3 hours leading up to each transaction.  
  * 
+ *       Rate limits:  30 calls / minute / IP (across all overhide APIs)
  *     parameters:
  *       - in: path
  *         name: currency
@@ -224,6 +227,7 @@ app.get('/tallymin/:currency/:values', token, throttle, async (req, res, next) =
  * 
  *       At present this services uses a time-window of 3 hours leading up to each transaction.  
  * 
+ *       Rate limits:  30 calls / minute / IP (across all overhide APIs)
  *     parameters:
  *       - in: path
  *         name: currency
