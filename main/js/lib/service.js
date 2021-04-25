@@ -191,7 +191,7 @@ class Service {
       (await this[getRates](timestamps, baseCurrency)).forEach(r => ratesByEpoch[r.timestamp] = r);
       const rateMultiplier = this[getRateMultiplier](currency);
       const result = values.reduce((acc, curr) => {
-        const matches = curr.match(/([0-9.]+)@(.+)/);
+        const matches = curr.match(/(-?[0-9.]+)@(.+)/);
         const timestamp = Date.parse(matches[2]);
         const value = matches[1];
         const rate = ratesByEpoch[timestamp];
@@ -224,7 +224,7 @@ class Service {
       (await this[getRates](timestamps,baseCurrency)).forEach(r => ratesByEpoch[r.timestamp] = r);
       const rateMultiplier = this[getRateMultiplier](currency);
       const result = values.reduce((acc, curr) => {
-        const matches = curr.match(/([0-9.]+)@(.+)/);
+        const matches = curr.match(/(-?[0-9.]+)@(.+)/);
         const timestamp = Date.parse(matches[2]);
         const value = matches[1];
         const rate = ratesByEpoch[timestamp];
