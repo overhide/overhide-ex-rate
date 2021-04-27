@@ -82,6 +82,8 @@ class Swagger {
 
             US dollars are the normalizing currency in *overhide*.
 
+            See [this blog post](https://overhide.io//2021/04/25/ex-rate.html) for more details.
+
             These APIs require bearer tokens to be furnished in an 'Authorization' header as 'Bearer ..' values.  The tokens are to be retrieved from
             [https://token.overhide.io](https://token.overhide.io).
           version: 1.0.0
