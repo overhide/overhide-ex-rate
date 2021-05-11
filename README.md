@@ -13,6 +13,9 @@ Exchange rate provider between *overhide* supported currencies and US dollars.
 Supported *overhide* currencies:
 
 - `eth` &mdash; ethereum
+- `wei` &mdash; ethereum
+- `btc` &mdash; bitcoin
+- `sat` &mdash; bitcoin
 
 # Quick Start Docker
 
