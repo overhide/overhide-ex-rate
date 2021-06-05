@@ -289,7 +289,7 @@ async function onHealthCheck() {
     throw new HealthCheckError('healtcheck failed', [dbError])
   }
   const rateMetrics = rates.getMetrics();
-  if (rateMetrics.errorsDelta > 0) {
+  if (rateMetrics.errors > 0) {
     log('RATE ERROR :: ' + JSON.stringify(rateMetrics));
     throw new HealthCheckError('healtcheck failed', JSON.stringify(rateMetrics))
   }

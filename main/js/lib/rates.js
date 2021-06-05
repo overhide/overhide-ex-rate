@@ -72,8 +72,6 @@ class Normalize {
 
     this[metrics] = {
       errors: 0,
-      previousErrors: 0,
-      errorsDelta: 0,
       requests: 0
     };
 
@@ -125,12 +123,10 @@ class Normalize {
   }
 
   /**
-   * @returns {{errors:.., errorsDelta:.., requests:..}} metrics object.
+   * @returns {{errors:.., requests:..}} metrics object.
    */
   getMetrics() {
     this[checkInit]();
-    this[metrics].errorsDelta = this[metrics].errors - this[metrics].previousErrors;
-    this[metrics].previousErrors = this[metrics].errors;
     return this[metrics];
   }  
 }
