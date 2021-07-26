@@ -24,6 +24,7 @@
   "homepage": "https://github.com/JakubNer/overhide-ex-rate.git",
   "dependencies": {
     "@godaddy/terminus": "4.1.0",
+    "applicationinsights": "2.1.4",
     "coingecko-api": "1.0.10",
     "cors": "2.8.5",
     "debug": "4.1.0",
