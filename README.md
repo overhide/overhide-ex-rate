@@ -1,6 +1,6 @@
 <p align="center"><a href="https://github.com/overhide"><img src="./main/static/lib/logo.png" width="200px"/></a></p>
 
-<p align="center"><a href="https://overhide.io">overhide.io</a></p><p style="width: 500px; margin: auto">A free and open-sourced (mostly) ecosystem of widgets, a front-end library, and back-end services &mdash; to make addition of "logins" and "in-app-purchases" (IAP) to your app as banal as possible.</p>
+<p align="center"><a href="https://overhide.io">overhide.io</a></p><p style="width: 500px; margin: auto">A free and fully open-sourced ecosystem of widgets, a front-end library, and back-end services &mdash; to make addition of "logins" and "in-app-purchases" (IAP) to your app as banal as possible.</p>
 
 <hr/>
 
@@ -16,6 +16,8 @@ Supported *overhide* currencies:
 - `wei` &mdash; ethereum
 - `btc` &mdash; bitcoin
 - `sat` &mdash; bitcoin
+
+> For help, reach out on [r/overhide](https://www.reddit.com/r/overhide/).
 
 # Quick Start Docker
 
